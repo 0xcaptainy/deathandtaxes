@@ -22,7 +22,7 @@ function safeInt(val) {
 
 // ─── API (via background worker) ────────────────────────────
 function fetchBatch(tokenIds) {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     const results = {};
     const needed = [];
 
@@ -37,21 +37,30 @@ function fetchBatch(tokenIds) {
 
     if (needed.length === 0) return resolve(results);
 
-    chrome.runtime.sendMessage({ type: "batch", ids: needed }, (response) => {
-      if (chrome.runtime.lastError) {
-        resolve(results);
-        return;
-      }
-      if (response && response.ok && response.data) {
-        for (const [id, info] of Object.entries(response.data)) {
-          if (info && typeof info === "object") {
-            cache.set(id, { data: info, timestamp: Date.now() });
-            results[id] = info;
+    // Split into chunks of 10 to avoid proxy timeout on cold cache
+    const chunks = [];
+    for (let i = 0; i < needed.length; i += 10) {
+      chunks.push(needed.slice(i, i + 10));
+    }
+
+    for (const chunk of chunks) {
+      await new Promise((res) => {
+        chrome.runtime.sendMessage({ type: "batch", ids: chunk }, (response) => {
+          if (chrome.runtime.lastError) { res(); return; }
+          if (response && response.ok && response.data) {
+            for (const [id, info] of Object.entries(response.data)) {
+              if (info && typeof info === "object") {
+                cache.set(id, { data: info, timestamp: Date.now() });
+                results[id] = info;
+              }
+            }
           }
-        }
-      }
-      resolve(results);
-    });
+          res();
+        });
+      });
+    }
+
+    resolve(results);
   });
 }
 
