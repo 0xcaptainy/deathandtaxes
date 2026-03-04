@@ -1,0 +1,176 @@
+/* ═══════════════════════════════════════════════════════════════
+   DEATH & TAXES — Chrome Extension Styles (v2)
+   ═══════════════════════════════════════════════════════════════ */
+
+.dt-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.92);
+  border-bottom: 2px solid #CDFF00;
+  padding: 6px 10px;
+  font-family: 'Courier New', Courier, monospace;
+  pointer-events: auto;
+}
+
+.dt-badge-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.dt-badge-logo {
+  font-weight: 900;
+  font-size: 10px;
+  color: #000;
+  background: #CDFF00;
+  padding: 1px 5px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.dt-badge-id {
+  font-size: 11px;
+  color: #CDFF00;
+  font-weight: 700;
+  flex: 1;
+}
+
+.dt-badge-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.dt-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 6px;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+
+.dt-tag-safe {
+  color: #CDFF00;
+  border-color: rgba(205, 255, 0, 0.3);
+  background: rgba(205, 255, 0, 0.08);
+}
+
+.dt-tag-delinquent {
+  color: #FF2222;
+  border-color: #FF2222;
+  background: rgba(255, 34, 34, 0.15);
+  animation: dt-blink 1.2s infinite;
+}
+
+.dt-tag-warning {
+  color: #f97316;
+  border-color: #f97316;
+  background: rgba(249, 115, 22, 0.12);
+}
+
+.dt-tag-killable {
+  color: #FF2222;
+  border-color: #FF2222;
+  background: rgba(255, 34, 34, 0.2);
+  animation: dt-blink 0.8s infinite;
+}
+
+.dt-tag-audit {
+  color: #eab308;
+  border-color: #eab308;
+  background: rgba(234, 179, 8, 0.1);
+}
+
+.dt-tag-critical {
+  color: #FF2222;
+  border-color: #FF2222;
+  background: rgba(255, 34, 34, 0.12);
+  animation: dt-blink 1s infinite;
+}
+
+.dt-tag-insured {
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.dt-tag-bribe {
+  color: #a855f7;
+  border-color: rgba(168, 85, 247, 0.4);
+  background: rgba(168, 85, 247, 0.1);
+}
+
+.dt-tag-loading {
+  color: rgba(205, 255, 0, 0.5);
+  border-color: rgba(205, 255, 0, 0.2);
+  background: rgba(205, 255, 0, 0.05);
+  animation: dt-pulse 1.5s infinite;
+}
+
+.dt-tag-unknown {
+  color: #555;
+  border-color: #333;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ─── Kill Button ────────────────────────────────────────── */
+
+.dt-kill-btn {
+  margin-left: auto;
+  padding: 3px 12px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 2px solid #FF2222;
+  background: rgba(255, 34, 34, 0.2);
+  color: #FF2222;
+  cursor: pointer;
+  transition: all 0.15s;
+  pointer-events: auto;
+  animation: dt-blink 1.5s infinite;
+}
+
+.dt-kill-btn:hover {
+  background: #FF2222;
+  color: #000;
+  animation: none;
+}
+
+.dt-kill-btn:active {
+  transform: scale(0.95);
+}
+
+.dt-kill-btn.dt-kill-pending {
+  border-color: #f97316;
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.15);
+  cursor: wait;
+  animation: dt-pulse 1s infinite;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.dt-kill-btn.dt-kill-success {
+  border-color: #CDFF00;
+  color: #CDFF00;
+  background: rgba(205, 255, 0, 0.15);
+  cursor: default;
+  animation: none;
+}
+
+@keyframes dt-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes dt-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}

@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Death & Taxes Scanner",
+  "version": "2.0.0",
+  "description": "Real time tax status badges for Death & Taxes NFTs on OpenSea",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://opensea.io/*",
+    "https://proxy-death.vercel.app/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none';"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://opensea.io/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
