@@ -34,4 +34,4 @@ extension only activates on the D&T collection page. it does not run on your pro
 - [Death & Taxes](https://www.deptofdeath.xyz/)
 - [Collection on OpenSea](https://opensea.io/collection/deathandtaxes)
 
-built by [@0xcaptainy](https://github.com/0xcaptainy)
+built by [@whycaptainy](https://x.com/whycaptainy)
