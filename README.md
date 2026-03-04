@@ -27,11 +27,11 @@ thats it. no terminal, no commands, no coding.
 
 ## how it works
 
-extension reads directly from the game contract on eth mainnet through a public api. zero background scanning. only fetches data for the tokens you are actually looking at. badges show up on every card with live status.
+extension only activates on the D&T collection page. it does not run on your profile, wallet, other collections, or anywhere else on opensea. you can verify this in `manifest.json`. reads directly from the game contract on eth mainnet through a public api. zero background scanning. only fetches data for the tokens you are actually looking at. badges show up on every card with live status.
 
 ## links
 
 - [Death & Taxes](https://www.deptofdeath.xyz/)
 - [Collection on OpenSea](https://opensea.io/collection/deathandtaxes)
 
-built by [@Whycaptainy](https://x.com/whycaptainy)
+built by [@0xcaptainy](https://github.com/0xcaptainy)

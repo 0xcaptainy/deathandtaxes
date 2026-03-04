@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════════════
-// DEATH & TAXES — Content Script (Public Build)
+// DEATH & TAXES — Content Script (v2.1)
+// Only runs on opensea.io/collection/deathandtaxes (locked in manifest)
 // No innerHTML with API data. All DOM built safely.
 // ═══════════════════════════════════════════════════════════════
 
-const DT_CONTRACT = "0x4f249b2dc6cecbd549a0c354bbfc4919e8c5d3ae";
 const cache = new Map();
 const CACHE_TTL = 60_000;
 
@@ -38,10 +38,16 @@ function fetchBatch(tokenIds) {
     if (needed.length === 0) return resolve(results);
 
     chrome.runtime.sendMessage({ type: "batch", ids: needed }, (response) => {
-      if (response && response.ok) {
+      if (chrome.runtime.lastError) {
+        resolve(results);
+        return;
+      }
+      if (response && response.ok && response.data) {
         for (const [id, info] of Object.entries(response.data)) {
-          cache.set(id, { data: info, timestamp: Date.now() });
-          results[id] = info;
+          if (info && typeof info === "object") {
+            cache.set(id, { data: info, timestamp: Date.now() });
+            results[id] = info;
+          }
         }
       }
       resolve(results);
@@ -49,7 +55,7 @@ function fetchBatch(tokenIds) {
   });
 }
 
-// ─── Badge Builder (safe DOM, no innerHTML with API data) ───
+// ─── Badge Builder (safe DOM only) ──────────────────────────
 function buildBadge(data, tokenId) {
   const badge = el("div", "dt-badge");
   badge.setAttribute("data-dt-id", tokenId);
@@ -150,17 +156,6 @@ function extractTokenId(card) {
   return null;
 }
 
-function isDeathAndTaxesPage() {
-  const url = window.location.href.toLowerCase();
-  return (
-    url.includes("deathandtaxes") ||
-    url.includes("death-taxes") ||
-    url.includes("death_taxes") ||
-    url.includes(DT_CONTRACT.toLowerCase()) ||
-    url.includes("deptofdeath")
-  );
-}
-
 function findNFTCards() {
   const selectors = ["article", '[role="gridcell"]', '[data-testid="ItemCard"]'];
   for (const sel of selectors) {
@@ -172,8 +167,6 @@ function findNFTCards() {
 
 // ─── Scan Page ──────────────────────────────────────────────
 async function scanPage() {
-  if (!isDeathAndTaxesPage()) return;
-
   const cards = findNFTCards();
   if (cards.length === 0) return;
 
@@ -205,23 +198,15 @@ async function scanPage() {
 
 // ─── Retry NO DATA badges ───────────────────────────────────
 async function retryFailed() {
-  if (!isDeathAndTaxesPage()) return;
-
   const failedBadges = document.querySelectorAll(".dt-badge");
   const retryMap = [];
 
   for (const badge of failedBadges) {
-    const noData = badge.querySelector(".dt-tag-unknown");
-    if (!noData) continue;
-
+    if (!badge.querySelector(".dt-tag-unknown")) continue;
     const tokenId = badge.getAttribute("data-dt-id");
     if (!tokenId) continue;
-
-    const card = badge.parentElement;
-    if (!card) continue;
-
     cache.delete(tokenId);
-    retryMap.push({ card, tokenId, badge });
+    retryMap.push({ tokenId, badge });
   }
 
   if (retryMap.length === 0) return;
@@ -233,27 +218,25 @@ async function retryFailed() {
     const data = batchData[tokenId] || null;
     if (data && !data.error) {
       const newBadge = buildBadge(data, tokenId);
-      if (badge.parentNode) {
-        badge.replaceWith(newBadge);
-      }
+      if (badge.parentNode) badge.replaceWith(newBadge);
     }
   }
 }
 
-// ─── Observer ───────────────────────────────────────────────
+// ─── Init ───────────────────────────────────────────────────
+scanPage();
+
+setTimeout(scanPage, 2000);
+setTimeout(scanPage, 5000);
+setTimeout(retryFailed, 3000);
+setTimeout(retryFailed, 6000);
+setTimeout(retryFailed, 12000);
+
 let scanTimeout = null;
 function debouncedScan() {
   if (scanTimeout) clearTimeout(scanTimeout);
   scanTimeout = setTimeout(scanPage, 500);
 }
-
-scanPage();
-
-setTimeout(retryFailed, 3000);
-setTimeout(retryFailed, 6000);
-setTimeout(retryFailed, 12000);
-setTimeout(scanPage, 2000);
-setTimeout(scanPage, 5000);
 
 const observer = new MutationObserver((mutations) => {
   for (const m of mutations) {
@@ -267,12 +250,3 @@ window.addEventListener("scroll", () => {
   if (scrollTimeout) clearTimeout(scrollTimeout);
   scrollTimeout = setTimeout(scanPage, 1000);
 });
-
-let lastUrl = window.location.href;
-setInterval(() => {
-  if (window.location.href !== lastUrl) {
-    lastUrl = window.location.href;
-    cache.clear();
-    setTimeout(scanPage, 1500);
-  }
-}, 1000);

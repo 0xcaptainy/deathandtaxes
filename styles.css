@@ -118,53 +118,6 @@
   background: rgba(255, 255, 255, 0.03);
 }
 
-/* ─── Kill Button ────────────────────────────────────────── */
-
-.dt-kill-btn {
-  margin-left: auto;
-  padding: 3px 12px;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  border: 2px solid #FF2222;
-  background: rgba(255, 34, 34, 0.2);
-  color: #FF2222;
-  cursor: pointer;
-  transition: all 0.15s;
-  pointer-events: auto;
-  animation: dt-blink 1.5s infinite;
-}
-
-.dt-kill-btn:hover {
-  background: #FF2222;
-  color: #000;
-  animation: none;
-}
-
-.dt-kill-btn:active {
-  transform: scale(0.95);
-}
-
-.dt-kill-btn.dt-kill-pending {
-  border-color: #f97316;
-  color: #f97316;
-  background: rgba(249, 115, 22, 0.15);
-  cursor: wait;
-  animation: dt-pulse 1s infinite;
-  font-size: 9px;
-  letter-spacing: 1px;
-}
-
-.dt-kill-btn.dt-kill-success {
-  border-color: #CDFF00;
-  color: #CDFF00;
-  background: rgba(205, 255, 0, 0.15);
-  cursor: default;
-  animation: none;
-}
-
 @keyframes dt-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
